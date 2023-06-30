@@ -1,0 +1,134 @@
+---
+title: "Pluviométrie - Kermorvan Plougrescant - Daniel Marjou"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(crosstalk)
+library(plotly)
+library(htmltools)
+
+pluie <- read.csv("pluie.csv",sep=";", header=TRUE)
+
+pluie <- pluie %>%
+  gather("mois", "mm", 2:13)
+
+pluie$mm <- as.numeric(pluie$mm)
+pluie$annee <- as.factor(pluie$annee)
+pluie$mois <- factor(pluie$mois, levels = c("janvier", "fevrier", "mars",
+                                            "avril", "mai", "juin", "juillet",
+                                            "aout", "septembre", "octobre", 
+                                            "novembre", "decembre"))
+```
+
+Par années
+=========================================================================
+
+```{r}
+shared_pluie <- SharedData$new(pluie)
+
+widget_annee <- bscols(
+
+  list(
+    filter_select(id = "annee", label = "Année", 
+                  sharedData = shared_pluie, 
+                  group = ~annee, 
+                  multiple = FALSE)
+  )
+  
+)
+
+
+# gg_annee <- ggplot(shared_pluie) +
+#   aes(x = mois, y = mm, fill=mm) + 
+#   scale_fill_gradient(high = "#132B43", low = "#56B1F7")+
+#   geom_col() +
+#   scale_y_continuous(breaks=seq(0,220,25), limits = c(0,225)) +
+#   labs(x="", y="") +
+#   theme_bw() + theme(legend.position='none') 
+
+p <- plot_ly(
+  data = shared_pluie,
+  x = ~mois,
+  y = ~mm,
+  type = "bar",
+  marker = list(color = ~mm)
+)
+
+
+bscols(
+  widths = c(2,10),
+  div(style = css(width="100%", height="400px"), widget_annee),
+  
+  div(style = css(width="100%", height="500px"), p)
+)
+```
+
+Par mois
+=========================================================================
+
+```{r}
+shared_pluie <- SharedData$new(pluie)
+
+widget_mois <- bscols(
+
+  list(
+    filter_select(id = "mois", label = "Mois", 
+                  sharedData = shared_pluie, 
+                  group = ~mois, 
+                  multiple = FALSE)
+  )
+  
+)
+
+
+p2 <- plot_ly(
+  data = shared_pluie,
+  x = ~annee,
+  y = ~mm,
+  type = "bar",
+  marker = list(color = ~mm)
+)
+
+
+bscols(
+  widths = c(2,10),
+  div(style = css(width="100%", height="400px"), widget_mois),
+  
+  div(style = css(width="100%", height="500px"), p2)
+)
+```
+
+
+
+Cumul
+======================================================================
+
+```{r}
+cumul <- pluie %>%
+  group_by(annee) %>%
+  summarise(tot=sum(mm,na.rm=TRUE))
+
+
+gg_cumul <- 
+  ggplot(cumul) +
+  aes(x = annee, y = tot, fill = tot) + 
+  scale_fill_gradient(high = "#132B43", low = "#56B1F7")+
+  geom_col() +
+  labs(x="", y="") +
+  theme_bw() + theme(legend.position='none') 
+
+ggplotly(gg_cumul,
+         tooltip = "tot")
+
+```
+
+
+
