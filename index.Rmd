@@ -29,7 +29,13 @@ pluie$mois <- factor(pluie$mois, levels = c("janvier", "fevrier", "mars",
 ```
 
 Par années
-=========================================================================
+=========================================================================================
+
+Column {.tabset}
+-------------------------------------
+
+### Filtre par années
+
 
 ```{r}
 shared_pluie <- SharedData$new(pluie)
@@ -60,16 +66,99 @@ p <- plot_ly(
   y = ~mm,
   type = "bar",
   marker = list(color = ~mm)
+  # marker = list(color = ~mm, colorscale = "Greens", showscale = TRUE)
 )
 
 
 bscols(
-  widths = c(2,10),
-  div(style = css(width="100%", height="400px"), widget_annee),
+  widths = c(9,2),
+  div(style = css(width="100%", height="500px"), p),
+  div(style = css(width="100%", height="400px"), widget_annee)
   
-  div(style = css(width="100%", height="500px"), p)
 )
 ```
+
+### Toutes les années
+
+```{r}
+# shared_pluie <- SharedData$new(pluie)
+# 
+# widget_annee <- bscols(
+# 
+#   list(
+#     filter_select(id = "annee", label = "Année", 
+#                   sharedData = shared_pluie, 
+#                   group = ~annee, 
+#                   multiple = FALSE)
+#   )
+#   
+# )
+
+
+gg_annee <- ggplot(pluie) +
+  aes(x = mois, y = mm, fill=mm, 
+      text= paste0(mois, " ", annee, "<br>",mm," mm")) +
+  scale_fill_gradient(high = "#132B43", low = "#56B1F7")+
+  geom_col() +
+  # scale_y_continuous(breaks=seq(0,220,25), limits = c(0,225)) +
+  labs(x="", y="") +
+  facet_wrap(~annee) +
+  theme_bw() + 
+  theme(legend.position='none',
+        axis.text.x = element_text(angle = 40, hjust=1, size = 8))
+
+plotly::ggplotly(gg_annee, tooltip = "text")
+
+# p <- plot_ly(
+#   data = shared_pluie,
+#   x = ~mois,
+#   y = ~mm,
+#   type = "bar",
+#   marker = list(color = ~mm)
+#   # marker = list(color = ~mm, colorscale = "Greens", showscale = TRUE)
+# )
+
+
+# bscols(
+#   widths = c(9,2),
+#   div(style = css(width="100%", height="800px"), ggly_annee)
+#   # div(style = css(width="100%", height="400px"), widget_annee)
+#   
+# )
+```
+
+
+### Evolution
+
+```{r}
+
+pluie %>%
+  mutate(
+    month = case_when(
+      mois == "janvier" ~ "01",
+      mois == "fevrier" ~ "02",
+      mois == "mars" ~ "03",
+      mois == "avril" ~ "04",
+      mois == "mai" ~ "05",
+      mois == "juin" ~ "06",
+      mois == "juillet" ~ "07",
+      mois == "aout" ~ "08",
+      mois == "septembre" ~ "09",
+      mois == "octobre" ~ "10",
+      mois == "novembre" ~ "11",
+      mois == "decembre" ~ "12"
+    ),
+    date = paste0(annee, "-", month)
+  ) %>%
+  ggplot() +
+  aes(x = date, y = mm, fill = annee) +
+  geom_col() +
+  theme(legend.position='none',
+        axis.text.x = element_blank())
+
+```
+
+
 
 Par mois
 =========================================================================
@@ -99,10 +188,10 @@ p2 <- plot_ly(
 
 
 bscols(
-  widths = c(2,10),
-  div(style = css(width="100%", height="400px"), widget_mois),
+  widths = c(9,2),
+  div(style = css(width="100%", height="500px"), p2),
+  div(style = css(width="100%", height="400px"), widget_mois)
   
-  div(style = css(width="100%", height="500px"), p2)
 )
 ```
 
