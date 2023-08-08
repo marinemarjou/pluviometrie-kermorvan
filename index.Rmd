@@ -153,12 +153,11 @@ p2 <- plot_ly(
   marker = list(color = ~mm)
 )
 
-
 bscols(
-  widths = c(2,10),
-  div(style = css(width="100%", height="400px"), widget_mois),
+  widths = c(9,2),
+  div(style = css(width="100%", height="500px"), p2),
+  div(style = css(width="100%", height="400px"), widget_mois)
   
-  div(style = css(width="100%", height="500px"), p2)
 )
 ```
 
