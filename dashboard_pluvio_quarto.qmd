@@ -36,6 +36,8 @@ pluie$mois <- factor(pluie$mois, levels = c("janvier", "fevrier", "mars",
 Bienvenue sur le tableau de bord pluviométrique de Daniel.
 
 
+
+
 # Visualisation annuelle {.tabset}
 
 ```{r}
@@ -73,8 +75,10 @@ bscols(
 
 # Synthèse annuelle {.tabset}
 
+## {.tabset}
 
 ```{r}
+#| title: "Vue d'ensemble"
 gg_annee <- ggplot(pluie) +
   aes(x = mois, y = mm, fill=mm, 
       text= paste0(mois, " ", annee, "<br>",mm," mm")) +
@@ -91,7 +95,27 @@ plotly::ggplotly(gg_annee, tooltip = "text")
 ```
 
 
-# Synthèse mensuelle {.tabset}
+```{r}
+#| title: 'Cumul annuel'
+cumul <- pluie %>%
+  group_by(annee) %>%
+  summarise(tot=sum(mm,na.rm=TRUE))
+
+
+gg_cumul <- 
+  ggplot(cumul) +
+  aes(x = annee, y = tot, fill = tot) + 
+  scale_fill_gradient(high = "#132B43", low = "#56B1F7")+
+  geom_col() +
+  labs(x="", y="") +
+  theme_bw() + theme(legend.position='none') 
+
+ggplotly(gg_cumul,
+         tooltip = "tot")
+```
+
+
+# Visualisation mensuelle {.tabset}
 
 ```{r}
 shared_pluie2 <- highlight_key(pluie)
