@@ -29,6 +29,7 @@ pluie$mois <- factor(pluie$mois, levels = c("janvier", "fevrier", "mars",
                                             "avril", "mai", "juin", "juillet",
                                             "aout", "septembre", "octobre", 
                                             "novembre", "decembre"))
+
 ```
 
 # Accueil {.tabset}
@@ -104,7 +105,7 @@ bscols(
 
 # Synthèse annuelle {.tabset}
 
-## {.tabset}
+## Choix : {.tabset}
 
 ```{r}
 #| title: "Vue d'ensemble"
@@ -143,32 +144,76 @@ ggplotly(gg_cumul,
          tooltip = "tot")
 ```
 
-
 # Visualisation mensuelle {.tabset}
 
 ```{r}
-shared_pluie2 <- highlight_key(pluie)
 
-filtre_mois <- filter_select(id = "filtre_mois", label = "Mois", 
-                  sharedData = shared_pluie2, 
-                  group = ~mois, 
-                  multiple = FALSE)
+pluie_annees <- pluie |>
+  # filter(annee != "moyenne") |>
+  mutate(annee = as.numeric(annee))
 
+mois_dispo <- unique(pluie_annees$mois)
 
-p2 <- plot_ly(
-  data = shared_pluie2,
-  x = ~annee,
-  y = ~mm,
-  type = "bar",
-  marker = list(color = ~mm)
-)
+p <- plot_ly()
 
-bscols(
-  widths = c(2, 9),
-  filtre_mois,
-  p2
+for (i in seq_along(mois_dispo)) {
+  mois_i <- mois_dispo[i]
   
-)
+  data_i <- pluie_annees |>
+    filter(mois == mois_i)
+  
+  med_i <- mean(data_i$mm, na.rm = TRUE)
+  
+  p <- p |>
+    add_bars(
+      data = data_i,
+      x = ~annee,
+      y = ~mm,
+      name = paste("Pluie -", mois_i),
+      marker = list(color = data_i$mm),
+      visible = i == 1,
+      showlegend = FALSE
+    ) |>
+    add_lines(
+      data = data_i,
+      x = ~annee,
+      y = rep(med_i, nrow(data_i)),
+      # name = paste0("Moyenne : ", round(med_i, 1), " mm"),
+      visible = i == 1,
+      line = list(dash = "dash", width = 3),
+      showlegend = TRUE
+    )
+}
+
+boutons <- lapply(seq_along(mois_dispo), function(i) {
+  visibles <- rep(FALSE, length(mois_dispo) * 2)
+  visibles[(2 * i - 1):(2 * i)] <- TRUE
+  
+  list(
+    method = "update",
+    label = mois_dispo[i],
+    args = list(
+      list(visible = visibles),
+      list(title = paste("Pluviométrie mensuelle -", mois_dispo[i]))
+    )
+  )
+})
+
+p |>
+  layout(
+    title = paste("Pluviométrie mensuelle -", mois_dispo[1]),
+    xaxis = list(title = "Année"),
+    yaxis = list(title = "Pluie (mm)"),
+    updatemenus = list(
+      list(
+        active = 0,
+        buttons = boutons,
+        x = 1.05,
+        y = 1
+      )
+    )
+  )
+
 ```
 
 
