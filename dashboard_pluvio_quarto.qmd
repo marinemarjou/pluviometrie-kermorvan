@@ -1,5 +1,5 @@
 ---
-title: "Dashboard pluviométrique"
+title: "Tableau de bord pluviométrique"
 execute: 
   echo: false
 format:
@@ -33,9 +33,38 @@ pluie$mois <- factor(pluie$mois, levels = c("janvier", "fevrier", "mars",
 
 # Accueil {.tabset}
 
-Bienvenue sur le tableau de bord pluviométrique de Daniel.
+::: {.card}
 
+**Bienvenu sur le tableau de bord pluviométrique de Daniel !**
 
+<br>
+
+::: {.columns}
+
+::: {.column width="70%"}
+
+Depuis 2007, ce petit pluviomètre (oui, celui en photo) est consulté chaque jour, ou presque, par Daniel, ancien agriculteur, et jardinier amateur à ses heures perdues, avec une régularité qui ferait pâlir bien des stations météorologiques. Relevé après relevé, il a permis de constituer une base de données unique retraçant près de vingt ans de pluie bretonne au lieu dit le Le Gouret (anciennement Kermorvan pour les locaux).
+
+Ici, pas de modèles climatiques à plusieurs millions d'euros, pas de satellites ni de supercalculateurs… juste un pluviomètre, des calendriers et beaucoup de persévérance. Une approche artisanale qui n'a rien à envier aux grandes institutions… enfin, tant qu'on ne demande pas la météo de demain !
+
+Ce tableau de bord vous invite à explorer ces relevés : comparer les années, rechercher les épisodes les plus pluvieux ou simplement vérifier si « *il pleuvait vraiment plus avant* ».
+
+:::
+
+::: {.column width="30%"}
+![](images/pluviometre.jpeg){width="100%"}
+:::
+
+:::
+
+N'hésitez pas à parcourir l'ensemble des onglets à votre disposition. Les graphiques sont interactifs et peuvent être visualiser en grand écran en cliquant sur le bouton en bas à droite de l'encart.
+
+:::
+
+Crédits : 
+
+- Collecte des données : Daniel
+- Création et maintenance de l'application : Marine
 
 
 # Visualisation annuelle {.tabset}
