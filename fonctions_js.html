@@ -1,0 +1,33 @@
+<script>
+function setCrosstalkDefaults() {
+  const filtreAnnee = document
+    .getElementById("filtre_annee")
+    ?.getElementsByClassName("selectized")[0]
+    ?.selectize;
+
+  const filtreMois = document
+    .getElementById("filtre_mois")
+    ?.getElementsByClassName("selectized")[0]
+    ?.selectize;
+
+  if (filtreAnnee && filtreMois) {
+    filtreAnnee.setValue("2025", false);
+    filtreMois.setValue("janvier", false);
+    return true;
+  }
+
+  return false;
+}
+
+window.addEventListener("load", function () {
+  let essais = 0;
+
+  const interval = setInterval(function () {
+    essais++;
+
+    if (setCrosstalkDefaults() || essais > 30) {
+      clearInterval(interval);
+    }
+  }, 200);
+});
+</script>
