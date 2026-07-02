@@ -1,0 +1,29 @@
+<script>
+function setCrosstalkDefaults() {
+  const filtreAnnee = document
+    .getElementById("filtre_annee")
+    ?.getElementsByClassName("selectized")[0]
+    ?.selectize;
+
+  let ok = false;
+
+  if (filtreAnnee) {
+    filtreAnnee.setValue("2026", false);
+    ok = true;
+  }
+
+  return ok;
+}
+
+window.addEventListener("load", function () {
+  let essais = 0;
+
+  const interval = setInterval(function () {
+    essais++;
+
+    if (setCrosstalkDefaults() || essais > 50) {
+      clearInterval(interval);
+    }
+  }, 200);
+});
+</script>
