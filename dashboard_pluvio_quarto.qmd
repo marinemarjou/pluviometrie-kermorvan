@@ -68,9 +68,13 @@ Crédits :
 - Création et maintenance de l'application : Marine
 
 
-# Visualisation annuelle {.tabset}
+# Synthèse annuelle {.tabset}
+
+## Choix : {.tabset}
 
 ```{r}
+#| title: Vue mensuelle
+
 shared_pluie <- highlight_key(pluie)
 
 # shared_pluie <- SharedData$new(pluie)
@@ -101,11 +105,6 @@ bscols(
 )
 ```
 
-
-
-# Synthèse annuelle {.tabset}
-
-## Choix : {.tabset}
 
 ```{r}
 #| title: "Vue d'ensemble"
@@ -148,9 +147,9 @@ ggplotly(gg_cumul,
 
 ```{r}
 
-pluie_annees <- pluie |>
+pluie_annees <- pluie #|>
   # filter(annee != "moyenne") |>
-  mutate(annee = as.numeric(annee))
+  # mutate(annee = as.numeric(annee))
 
 mois_dispo <- unique(pluie_annees$mois)
 
@@ -162,7 +161,7 @@ for (i in seq_along(mois_dispo)) {
   data_i <- pluie_annees |>
     filter(mois == mois_i)
   
-  med_i <- mean(data_i$mm, na.rm = TRUE)
+  med_i <- round(mean(data_i$mm, na.rm = TRUE),0)
   
   p <- p |>
     add_bars(
