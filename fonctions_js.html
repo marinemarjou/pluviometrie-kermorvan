@@ -10,13 +10,19 @@ function setCrosstalkDefaults() {
     ?.getElementsByClassName("selectized")[0]
     ?.selectize;
 
-  if (filtreAnnee && filtreMois) {
+  let ok = false;
+
+  if (filtreAnnee) {
     filtreAnnee.setValue("2025", false);
-    filtreMois.setValue("janvier", false);
-    return true;
+    ok = true;
   }
 
-  return false;
+  if (filtreMois) {
+    filtreMois.setValue("janvier", false);
+    ok = true;
+  }
+
+  return ok;
 }
 
 window.addEventListener("load", function () {
@@ -25,7 +31,7 @@ window.addEventListener("load", function () {
   const interval = setInterval(function () {
     essais++;
 
-    if (setCrosstalkDefaults() || essais > 30) {
+    if (setCrosstalkDefaults() || essais > 50) {
       clearInterval(interval);
     }
   }, 200);
