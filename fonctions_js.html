@@ -5,20 +5,10 @@ function setCrosstalkDefaults() {
     ?.getElementsByClassName("selectized")[0]
     ?.selectize;
 
-  const filtreMois = document
-    .getElementById("filtre_mois")
-    ?.getElementsByClassName("selectized")[0]
-    ?.selectize;
-
   let ok = false;
 
   if (filtreAnnee) {
-    filtreAnnee.setValue("2025", false);
-    ok = true;
-  }
-
-  if (filtreMois) {
-    filtreMois.setValue("janvier", false);
+    filtreAnnee.setValue("2026", false);
     ok = true;
   }
 
