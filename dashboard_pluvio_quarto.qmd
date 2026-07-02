@@ -225,5 +225,6 @@ p |>
 ```
 
 
-# Épisodes remarquables {.tabset}
+# À suivre... {.tabset}
 
+Lorsque la motivation, le temps et la créativité seront de nouveaux rassemblés pourquoi ne pas proposer de nouveaux onglets. Toutes les propositions sont les bienvenues.
