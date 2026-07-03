@@ -8,6 +8,9 @@ format:
     orientation: rows
     include-after-body: fonctions_js.html
     embed-resources: true
+    nav-buttons:
+      - icon: github
+        href: https://github.com/marinemarjou/pluviometrie-kermorvan
 ---
 
 ```{r setup}
@@ -34,38 +37,90 @@ pluie$mois <- factor(pluie$mois, levels = c("janvier", "fevrier", "mars",
 
 # Accueil {.tabset}
 
-::: {.card}
+```{r}
+#| include: false
 
-**Bienvenu sur le tableau de bord pluviométrique de Daniel !**
+pluie_obs <- pluie |>
+  mutate(annee = as.integer(as.character(annee)))
 
-<br>
+annee_en_cours = max(pluie_obs$annee)
 
-::: {.columns}
+cumul_annuel <- pluie_obs |>
+  group_by(annee) |>
+  summarise(cumul = sum(mm, na.rm = TRUE), .groups = "drop")
 
-::: {.column width="70%"}
+periode_suivi <- paste0(min(cumul_annuel$annee), "–", max(cumul_annuel$annee))
 
-Depuis 2007, ce petit pluviomètre (oui, celui en photo) est consulté chaque jour, ou presque, par Daniel, ancien agriculteur, et jardinier amateur à ses heures perdues, avec une régularité qui ferait pâlir bien des stations météorologiques. Relevé après relevé, il a permis de constituer une base de données unique retraçant près de vingt ans de pluie bretonne au lieu dit le Le Gouret (anciennement Kermorvan pour les locaux).
+annee_seche <- cumul_annuel |> filter(annee != annee_en_cours) |> slice_min(cumul, n = 1)
+annee_pluvieuse <- cumul_annuel |> slice_max(cumul, n = 1)
 
-Ici, pas de modèles climatiques à plusieurs millions d'euros, pas de satellites ni de supercalculateurs… juste un pluviomètre, des calendriers et beaucoup de persévérance. Une approche artisanale qui n'a rien à envier aux grandes institutions… enfin, tant qu'on ne demande pas la météo de demain !
+annee_en_cours <- max(cumul_annuel$annee)
 
-Ce tableau de bord vous invite à explorer ces relevés : comparer les années, rechercher les épisodes les plus pluvieux ou simplement vérifier si « *il pleuvait vraiment plus avant* ».
+cumul_en_cours <- cumul_annuel |>
+  filter(annee == annee_en_cours)
+```
 
-:::
+## Row
 
-::: {.column width="30%"}
-![](images/pluviometre.jpeg){width="100%"}
-:::
 
-:::
+**Bienvenue sur le tableau de bord pluviométrique de Daniel !**
 
-N'hésitez pas à parcourir l'ensemble des onglets à votre disposition. Les graphiques sont interactifs et peuvent être visualiser en grand écran en cliquant sur le bouton en bas à droite de l'encart.
+Depuis 2007, un petit pluviomètre est consulté chaque jour, ou presque, par Daniel, ancien agriculteur et jardinier amateur à ses heures perdues, avec une régularité qui ferait pâlir bien des stations météorologiques. Relevé après relevé, il a permis de constituer une base de données unique retraçant près de vingt ans de pluie bretonne au lieu-dit Le Gouret, anciennement Kermorvan pour les locaux.
 
-:::
+Ici, pas de modèles climatiques à plusieurs millions d'euros, pas de satellites ni de supercalculateurs… juste un pluviomètre, des calendriers et beaucoup de persévérance. Une approche artisanale qui n'a rien à envier aux grandes institutions...
 
-Crédits : 
+N'hésitez pas à parcourir l'ensemble des onglets à votre disposition. Les graphiques sont interactifs et peuvent être visualisés en grand écran en cliquant sur le bouton en bas à droite de l'encart.
+
+
+## Row 
+
+```{r}
+#| content: valuebox
+list(
+  icon = "calendar",
+  title = "Période suivie",
+  value = periode_suivi,
+  color = "info"
+)
+```
+
+```{r}
+#| content: valuebox
+list(
+  icon = "sun",
+  title = "Année la plus sèche",
+  value = paste0(annee_seche$annee, " — ", annee_seche$cumul, " mm"),
+  color = "warning"
+)
+```
+
+```{r}
+#| content: valuebox
+list(
+  icon = "cloud-rain",
+  title = "Année la plus pluvieuse",
+  value = paste0(annee_pluvieuse$annee, " — ", annee_pluvieuse$cumul, " mm"),
+  color = "primary"
+)
+```
+
+```{r}
+#| content: valuebox
+list(
+  icon = "droplet",
+  title = paste0("Cumul ", annee_en_cours),
+  value = paste0(cumul_en_cours$cumul, " mm"),
+  color = "success"
+)
+```
+
+## Row
+
+**Crédits :**
 
 - Collecte des données : Daniel
 - Création et maintenance de l'application : Marine
+
 
 
 # Synthèse annuelle {.tabset}
